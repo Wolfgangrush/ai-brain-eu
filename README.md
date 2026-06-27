@@ -1,3 +1,18 @@
+<div align="center">
+
+<img src="docs/banner.png" width="820"/>
+
+**A local-first practice brain for EU attorneys.**
+
+Visit the live site: [wolfgangrush.github.io](https://wolfgangrush.github.io)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![Local-first](https://img.shields.io/badge/local--first-blue)
+![Built for EU lawyers](https://img.shields.io/badge/built%20for-EU%20lawyers-blueviolet)
+
+</div>
+
+
 # 🇪🇺 AI Brain for EU Lawyers
 
 > **Free practice OS for every EU solo lawyer (avocat · Anwalt · advocaat · abogado · avvocato · advokát · δικηγόρος · advokat · adwokat · ügyvéd · advogado · etc.). Terminal-native. Local-first by default (Ollama + Qwen3 / Mistral — nothing leaves your laptop). Cloud-LLM optional with the [Pseudonymisation Gateway](https://github.com/Wolfgangrush/pseudonymisation-gateway) sanitising PII before any prompt leaves the machine; Chapter V Article 46 supplementary safeguards remain YOUR responsibility for US-routed cloud transmission.**
