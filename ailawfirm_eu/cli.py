@@ -1,26 +1,49 @@
 #!/usr/bin/env python3
 """
-AI Brain for EU Lawyers · v0.1
-Built on Brain memory architecture. No API key required.
+AI Brain for EU Lawyers · v2.0
+Built on MemPalace memory architecture. No API key required.
 
 ═══════════════════════════════════════════════════════════════════
-  AI Brain for EU Lawyers · v0.1.0
+  AI Brain for EU Lawyers · 2.0.0
 
   Welcome · Bienvenue · Willkommen · Bienvenido · Benvenuto
      Welkom · Witaj · Välkommen · Bem-vindo · Vítejte
      Καλώς ήρθατε · Bun venit · أهلاً وسهلاً
 ═══════════════════════════════════════════════════════════════════
 
-Commands:
-    ailawfirm-eu init <dir>                  Initialize a practice palace
-    ailawfirm-eu mine <dir>                  Mine case files into memory
-    ailawfirm-eu mine <dir> --mode convos    Mine conversation exports
-    ailawfirm-eu search "query"              Search your practice memory
-    ailawfirm-eu wake-up                     Show L0 + L1 wake-up context
-    ailawfirm-eu status                      Show what's been filed
+Commands (v2.0 — terminal brain):
+    ailawfirm-eu reception                  "Turn it on" — greet, verify
+                                           specialists, load retrospective memory,
+                                           show last-session recap.
+    ailawfirm-eu ask "<question>"           One-shot — classify the query, route
+                                           to the right specialist, print answer.
+    ailawfirm-eu chat                       Interactive REPL — every line is
+                                           routed to a specialist for you.
+    ailawfirm-eu recap [-n N]               Show the last N retrospective-memory
+                                           entries from recent sessions.
+    ailawfirm-eu mine <dir>                 Mine case files / projects into the
+                                           palace (ChromaDB).
+    ailawfirm-eu mine <dir> --mode convos   Mine conversation exports.
+    ailawfirm-eu split <dir>                Split concatenated transcript mega-
+                                           files into per-session files.
+    ailawfirm-eu search "query"             Semantic search across filed drawers.
+    ailawfirm-eu wake-up [--wing NAME]      Show L0 (identity) + L1 (essential
+                                           story) — the wake-up context.
+    ailawfirm-eu status                     Show what's been filed.
+    ailawfirm-eu compress [--wing NAME]     Compress drawers using Entity-Aliasing
+                                           Dialect (~30x reduction).
+    ailawfirm-eu init <dir>                 Initialize a practice palace.
+    ailawfirm-eu connect-local              Install Ollama + download Qwen3 +
+                                           write config (local-AI, zero cloud).
+    ailawfirm-eu update                     Pull the latest firm code from
+                                           upstream (matter data is NEVER touched).
 
 Examples:
-    ailawfirm-eu init ~/my-eu-practice
+    ailawfirm-eu reception
+    ailawfirm-eu ask "validate a case citation"
+    ailawfirm-eu ask "which court has jurisdiction over my matter"
+    ailawfirm-eu chat
+    ailawfirm-eu recap
     ailawfirm-eu mine ~/my-eu-practice
     ailawfirm-eu search "Brussels I-bis enforcement"
     ailawfirm-eu search "GDPR deadline" --wing eu_practice --room compliance
@@ -32,6 +55,7 @@ import argparse
 from .update import cmd_update, copy_claude_md_template
 from pathlib import Path
 
+from ailawfirm_eu.collection import get_collection_name
 from ailawfirm_eu.config import AilawfirmEuConfig
 
 
@@ -188,7 +212,7 @@ def cmd_compress(args):
     # Connect to palace
     try:
         client = chromadb.PersistentClient(path=palace_path)
-        col = client.get_collection("ailawfirm_eu_drawers")
+        col = client.get_collection(get_collection_name())
     except Exception:
         print(f"\n  No palace found at {palace_path}")
         print("  Run: ailawfirm-eu init <dir> then ailawfirm-eu mine <dir>")
@@ -248,7 +272,8 @@ def cmd_compress(args):
     # Store compressed versions (unless dry-run)
     if not args.dry_run:
         try:
-            comp_col = client.get_or_create_collection("brain_compressed")
+            compressed_name = f"{get_collection_name()}_compressed"
+            comp_col = client.get_or_create_collection(compressed_name)
             for doc_id, compressed, meta, stats in compressed_entries:
                 comp_meta = dict(meta)
                 comp_meta["compression_ratio"] = round(stats["ratio"], 1)
@@ -259,7 +284,7 @@ def cmd_compress(args):
                     metadatas=[comp_meta],
                 )
             print(
-                f"  Stored {len(compressed_entries)} compressed drawers in 'brain_compressed' collection."
+                f"  Stored {len(compressed_entries)} compressed drawers in '{compressed_name}' collection."
             )
         except Exception as e:
             print(f"  Error storing compressed drawers: {e}")

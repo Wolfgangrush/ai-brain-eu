@@ -62,6 +62,60 @@ def _no_palace():
     }
 
 
+def _tally_metadata(col, *, fields, where=None, op_name=""):
+    """Aggregate drawer counts from a ChromaDB collection's metadata.
+
+    ``fields`` is an iterable of metadata keys to tally by (e.g. ``["wing"]``,
+    ``["wing", "room"]``). Returns a nested ``dict`` whose leaves are counts.
+
+    Single field tuple ``("wing",)`` → ``{"wing_a": 3, "wing_b": 5}``
+    Two-field tuple ``("wing", "room")`` →
+    ``{"wing_a": {"room_x": 2, "room_y": 1}, "wing_b": {...}}``
+
+    Any exception reading metadata is logged at WARNING and yields an empty
+    result dict so the calling tool still returns a sane payload.
+    """
+    kwargs = {"include": ["metadatas"]}
+    if where:
+        kwargs["where"] = where
+    try:
+        all_meta = col.get(**kwargs)["metadatas"]
+    except Exception as e:
+        logger.warning("%s: failed to read metadata for tally: %s", op_name or "tally", e)
+        return {}
+
+    fields = tuple(fields)
+
+    if len(fields) == 1:
+        out = {}
+        key0 = fields[0]
+        for m in all_meta:
+            k = m.get(key0, "unknown")
+            out[k] = out.get(k, 0) + 1
+        return out
+
+    if len(fields) == 2:
+        key0, key1 = fields
+        out = {}
+        for m in all_meta:
+            k0 = m.get(key0, "unknown")
+            k1 = m.get(key1, "unknown")
+            bucket = out.setdefault(k0, {})
+            bucket[k1] = bucket.get(k1, 0) + 1
+        return out
+
+    # Generic N-key path
+    out = {}
+    for m in all_meta:
+        node = out
+        keys = [m.get(k, "unknown") for k in fields]
+        for k in keys[:-1]:
+            node = node.setdefault(k, {})
+        leaf = keys[-1]
+        node[leaf] = node.get(leaf, 0) + 1
+    return out
+
+
 # ==================== READ TOOLS ====================
 
 
@@ -70,17 +124,12 @@ def tool_status():
     if not col:
         return _no_palace()
     count = col.count()
-    wings = {}
-    rooms = {}
     try:
-        all_meta = col.get(include=["metadatas"])["metadatas"]
-        for m in all_meta:
-            w = m.get("wing", "unknown")
-            r = m.get("room", "unknown")
-            wings[w] = wings.get(w, 0) + 1
-            rooms[r] = rooms.get(r, 0) + 1
-    except Exception:
-        pass
+        wings = _tally_metadata(col, fields=("wing",), op_name="tool_status")
+        rooms = _tally_metadata(col, fields=("room",), op_name="tool_status")
+    except Exception as e:
+        logger.warning("tool_status: tally dispatch failed: %s", e)
+        wings, rooms = {}, {}
     return {
         "total_drawers": count,
         "wings": wings,
@@ -128,14 +177,7 @@ def tool_list_wings():
     col = _get_collection()
     if not col:
         return _no_palace()
-    wings = {}
-    try:
-        all_meta = col.get(include=["metadatas"])["metadatas"]
-        for m in all_meta:
-            w = m.get("wing", "unknown")
-            wings[w] = wings.get(w, 0) + 1
-    except Exception:
-        pass
+    wings = _tally_metadata(col, fields=("wing",), op_name="tool_list_wings")
     return {"wings": wings}
 
 
@@ -143,17 +185,8 @@ def tool_list_rooms(wing: str = None):
     col = _get_collection()
     if not col:
         return _no_palace()
-    rooms = {}
-    try:
-        kwargs = {"include": ["metadatas"]}
-        if wing:
-            kwargs["where"] = {"wing": wing}
-        all_meta = col.get(**kwargs)["metadatas"]
-        for m in all_meta:
-            r = m.get("room", "unknown")
-            rooms[r] = rooms.get(r, 0) + 1
-    except Exception:
-        pass
+    where = {"wing": wing} if wing else None
+    rooms = _tally_metadata(col, fields=("room",), where=where, op_name="tool_list_rooms")
     return {"wing": wing or "all", "rooms": rooms}
 
 
@@ -161,17 +194,7 @@ def tool_get_taxonomy():
     col = _get_collection()
     if not col:
         return _no_palace()
-    taxonomy = {}
-    try:
-        all_meta = col.get(include=["metadatas"])["metadatas"]
-        for m in all_meta:
-            w = m.get("wing", "unknown")
-            r = m.get("room", "unknown")
-            if w not in taxonomy:
-                taxonomy[w] = {}
-            taxonomy[w][r] = taxonomy[w].get(r, 0) + 1
-    except Exception:
-        pass
+    taxonomy = _tally_metadata(col, fields=("wing", "room"), op_name="tool_get_taxonomy")
     return {"taxonomy": taxonomy}
 
 

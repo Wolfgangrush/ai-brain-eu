@@ -43,6 +43,12 @@ Every specialist is **AI-backed** by whatever host you launch it under (Claude �
 
 > 🛡️ **Privacy primitive: PII pseudonymisation** via [pseudonymisation-gateway](https://github.com/Wolfgangrush/pseudonymisation-gateway) (wolfgang_rush · MIT). This firm uses the `eu` jurisdiction module + Indian-diaspora overlay for cross-jurisdiction PII coverage. Open-source · zero runtime deps · session-scoped · in-memory only · never writes PII to disk.
 
+## Recent fixes
+
+- **Unified ChromaDB collection name.** The MCP server's writes and the CLI/search path both now read the collection name from `AilawfirmEuConfig().collection_name` via a single `ailawfirm_eu.collection.get_collection_name()` accessor. Previously, the MCP server wrote to one collection while `search` / `mine` / `layers` / `compress` read from another, so drawers filed via the MCP server were invisible to `search` and vice versa. Drawers saved by either path are now findable by both.
+- **Removed dead code.** Deleted `KnowledgeGraph.seed_from_entity_facts` (referenced a non-existent `fact_checker.py` and was never called) and the no-op `_ = signal_categories - {"pronoun"}` line in `entity_detector.classify_entity`.
+- **Consolidated duplicate stop-word lists.** `entity_detector.STOPWORDS` and `dialect._STOP_WORDS` were two near-identical sets kept in different files (and silently drifting). Both now import the deduplicated UNION from the new `ailawfirm_eu.stopwords.STOPWORDS` module.
+
 
 > 🛡️ **Pseudonymisation coverage (v0.1.1):** The privacy gateway pseudonymises PII before any cloud-API call; any residue the scanner can't fully resolve is surfaced to you and audit-logged — you retain the final call (v0.3 honest-disclosure). Covers EU-native identifiers (IBAN across 27 member states · EU VAT · EORI · German Steuer-ID · French INSEE · Italian Codice Fiscale · CJEU case numbers · EUR amounts) and Indian-diaspora identifiers (Aadhaar · PAN · GSTIN · IFSC · Indian phone — Europe has substantial South Asian diaspora). Generic patterns (email · names with honorifics · dates) work cross-jurisdiction. Per-member-state national-ID variants (27 countries) will expand in v0.2.
 
@@ -174,11 +180,11 @@ Sample commands:
 
 **Architecture — three pieces decide your privacy posture:**
 
-**(1) Local-only state.** Your matters, drafts, audit logs, calendar entries, and configuration live in `~/.ailawfirm_eu/`. Never uploaded by the tool. Never synced to a third-party cloud by the tool. No telemetry. No "anonymous usage statistics." The publisher operates zero infrastructure and cannot access this folder. Verifiable via `grep -ri "telemetry\|analytics\|requests.post\|urlopen" ailawfirm_eu/` — should return only user-initiated cloud-LLM calls.
+**(1) Local-only state.** Your matters, drafts, audit logs, calendar entries, and configuration live in `~/.ailawfirm-eu/`. Never uploaded by the tool. Never synced to a third-party cloud by the tool. No telemetry. No "anonymous usage statistics." The publisher operates zero infrastructure and cannot access this folder. Verifiable via `grep -ri "telemetry\|analytics\|requests.post\|urlopen" ailawfirm_eu/` — should return only user-initiated cloud-LLM calls.
 
 **(2) LLM backend — you choose.** The default `connect-local` command configures Ollama + Qwen3 (or Mistral as European-developed alternative) to run the language model on your laptop (truly nothing leaves; Schrems II is moot in this configuration because no cross-border transfer occurs). If you opt into a cloud-LLM tier (DeepSeek / Claude / Gemini) for quality reasons, see the tier table above for cost + privacy trade-offs.
 
-**(3) Pseudonymisation Gateway — always-on for cloud mode.** When you configure a cloud-LLM provider in `~/.ailawfirm_eu/config.json`, the internalised `PseudonymisationGateway` (source: `ailawfirm_eu/pseudonymisation.py`) automatically substitutes real names, government IDs (IBAN across 27 Member States · EU VAT · EORI · German Steuer-ID · French INSEE · Italian Codice Fiscale · Aadhaar for Indian-diaspora matters), contact identifiers (phone · email), and case references (CJEU C-numbers · ECLI · national court formats) with deterministic placeholders BEFORE the prompt leaves your machine. The placeholder ↔ original map lives in memory only (never written to disk; destroyed when the gateway goes out of scope). Cloud vendors see only the abstract structure of the matter; the user sees real values restored in the response.
+**(3) Pseudonymisation Gateway — always-on for cloud mode.** When you configure a cloud-LLM provider in `~/.ailawfirm-eu/config.json`, the internalised `PseudonymisationGateway` (source: `ailawfirm_eu/pseudonymisation.py`) automatically substitutes real names, government IDs (IBAN across 27 Member States · EU VAT · EORI · German Steuer-ID · French INSEE · Italian Codice Fiscale · Aadhaar for Indian-diaspora matters), contact identifiers (phone · email), and case references (CJEU C-numbers · ECLI · national court formats) with deterministic placeholders BEFORE the prompt leaves your machine. The placeholder ↔ original map lives in memory only (never written to disk; destroyed when the gateway goes out of scope). Cloud vendors see only the abstract structure of the matter; the user sees real values restored in the response.
 
 **⚠️ Schrems II in cloud mode.** US-based cloud providers (Anthropic · OpenAI · Google) trigger GDPR Chapter V Article 44 + 46. Gateway sanitisation **reduces** Schrems II exposure (because what crosses the border is structurally pseudonymised — supports your Transfer Impact Assessment) but does **not eliminate** it. You must independently execute:
 - Standard Contractual Clauses (Module 2 for controller-to-processor transfers)
@@ -228,7 +234,7 @@ If your matter is:
 - **GDPR special-category data / health / criminal record / political opinion** → Stay in `connect-local` (Ollama + Qwen3) mode. Do not opt into any cloud-LLM tier for these matters; do not use free-tier Gemini.
 - **State secrets / classified material / under-seal court orders** → Stay in `connect-local` (Ollama + Qwen3) mode. For physically air-gapped networks where the pip-install / model-download / auto-update paths are also prohibited, await the v0.3+ signed offline-install bundle below.
 
-The firm's audit log captures every API call (timestamp, agent, prompt-summary, output-summary) at `~/.ailawfirm_eu/audit_logs/`. Logs never leave your machine. They are your professional-conduct compliance trail.
+The firm's audit log captures every API call (timestamp, agent, prompt-summary, output-summary) at `~/.ailawfirm-eu/audit_logs/`. Logs never leave your machine. They are your professional-conduct compliance trail.
 
 ### v0.3+ roadmap
 
