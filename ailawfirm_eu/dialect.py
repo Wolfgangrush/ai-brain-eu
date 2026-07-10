@@ -41,6 +41,8 @@ import re
 from typing import List, Dict, Optional
 from pathlib import Path
 
+from ailawfirm_eu.stopwords import STOPWORDS
+
 
 # === EMOTION CODES (universal) ===
 
@@ -151,142 +153,8 @@ _FLAG_SIGNALS = {
     "config": "TECHNICAL",
 }
 
-# Common filler/stop words to strip from topic extraction
-_STOP_WORDS = {
-    "the",
-    "a",
-    "an",
-    "is",
-    "are",
-    "was",
-    "were",
-    "be",
-    "been",
-    "being",
-    "have",
-    "has",
-    "had",
-    "do",
-    "does",
-    "did",
-    "will",
-    "would",
-    "could",
-    "should",
-    "may",
-    "might",
-    "shall",
-    "can",
-    "to",
-    "of",
-    "in",
-    "for",
-    "on",
-    "with",
-    "at",
-    "by",
-    "from",
-    "as",
-    "into",
-    "about",
-    "between",
-    "through",
-    "during",
-    "before",
-    "after",
-    "above",
-    "below",
-    "up",
-    "down",
-    "out",
-    "off",
-    "over",
-    "under",
-    "again",
-    "further",
-    "then",
-    "once",
-    "here",
-    "there",
-    "when",
-    "where",
-    "why",
-    "how",
-    "all",
-    "each",
-    "every",
-    "both",
-    "few",
-    "more",
-    "most",
-    "other",
-    "some",
-    "such",
-    "no",
-    "nor",
-    "not",
-    "only",
-    "own",
-    "same",
-    "so",
-    "than",
-    "too",
-    "very",
-    "just",
-    "don",
-    "now",
-    "and",
-    "but",
-    "or",
-    "if",
-    "while",
-    "that",
-    "this",
-    "these",
-    "those",
-    "it",
-    "its",
-    "i",
-    "we",
-    "you",
-    "he",
-    "she",
-    "they",
-    "me",
-    "him",
-    "her",
-    "us",
-    "them",
-    "my",
-    "your",
-    "his",
-    "our",
-    "their",
-    "what",
-    "which",
-    "who",
-    "whom",
-    "also",
-    "much",
-    "many",
-    "like",
-    "because",
-    "since",
-    "get",
-    "got",
-    "use",
-    "used",
-    "using",
-    "make",
-    "made",
-    "thing",
-    "things",
-    "way",
-    "well",
-    "really",
-    "want",
-    "need",
-}
+# Common filler/stop words to strip from topic extraction.
+# Defined centrally in ailawfirm_eu.stopwords — imported as STOPWORDS at top.
 
 
 class Dialect:
@@ -435,14 +303,14 @@ class Dialect:
         freq = {}
         for w in words:
             w_lower = w.lower()
-            if w_lower in _STOP_WORDS or len(w_lower) < 3:
+            if w_lower in STOPWORDS or len(w_lower) < 3:
                 continue
             freq[w_lower] = freq.get(w_lower, 0) + 1
 
         # Also boost words that look like proper nouns or technical terms
         for w in words:
             w_lower = w.lower()
-            if w_lower in _STOP_WORDS:
+            if w_lower in STOPWORDS:
                 continue
             if w[0].isupper() and w_lower in freq:
                 freq[w_lower] += 2
@@ -527,7 +395,7 @@ class Dialect:
                 and clean[0].isupper()
                 and clean[1:].islower()
                 and i > 0
-                and clean.lower() not in _STOP_WORDS
+                and clean.lower() not in STOPWORDS
             ):
                 code = clean[:3].upper()
                 if code not in found:

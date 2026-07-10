@@ -11,6 +11,8 @@ from pathlib import Path
 
 import chromadb
 
+from ailawfirm_eu.collection import get_collection_name
+
 
 def search(query: str, palace_path: str, wing: str = None, room: str = None, n_results: int = 5):
     """
@@ -19,10 +21,10 @@ def search(query: str, palace_path: str, wing: str = None, room: str = None, n_r
     """
     try:
         client = chromadb.PersistentClient(path=palace_path)
-        col = client.get_collection("brain_drawers")
+        col = client.get_collection(get_collection_name())
     except Exception:
         print(f"\n  No palace found at {palace_path}")
-        print("  Run: brain init <dir> then brain mine <dir>")
+        print("  Run: ailawfirm-eu init <dir> then ailawfirm-eu mine <dir>")
         sys.exit(1)
 
     # Build where filter
@@ -93,7 +95,7 @@ def search_memories(
     """
     try:
         client = chromadb.PersistentClient(path=palace_path)
-        col = client.get_collection("brain_drawers")
+        col = client.get_collection(get_collection_name())
     except Exception as e:
         return {"error": f"No palace found at {palace_path}: {e}"}
 
