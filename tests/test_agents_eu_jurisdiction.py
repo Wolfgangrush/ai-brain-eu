@@ -9,7 +9,6 @@ references, all pointing at draft-with-docx. NO Indian/SG/US/UK-specific residue
 
 import re
 
-import pytest
 
 from ailawfirm_eu.agents import drafting_agent
 

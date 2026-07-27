@@ -10,7 +10,6 @@ matter_agent: local store under ~/.ailawfirm_eu. NO foreign residue.
 import inspect
 import re
 
-import pytest
 
 from ailawfirm_eu.agents import deadline_agent, matter_agent
 
