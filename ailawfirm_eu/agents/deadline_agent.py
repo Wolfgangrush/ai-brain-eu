@@ -5,8 +5,18 @@ _MONTHS = {
     name.lower(): number
     for number, name in enumerate(
         (
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December",
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
         ),
         1,
     )
@@ -65,45 +75,29 @@ def handle(payload: str) -> dict:
     text = str(payload or "")
     query = text.lower()
 
-    if (
-        "data subject access" in query
-        or "dsar" in query
-        or "subject access" in query
-    ):
+    if "data subject access" in query or "dsar" in query or "subject access" in query:
         category = "GDPR — DSAR response"
         period = "1 month"
-        article = (
-            "GDPR Art 12(3) "
-            "(extendable +2 months for complex requests)"
-        )
+        article = "GDPR Art 12(3) (extendable +2 months for complex requests)"
         years = None
     elif (
-        "data breach" in query
-        or "breach notification" in query
-        or "personal data breach" in query
+        "data breach" in query or "breach notification" in query or "personal data breach" in query
     ):
         category = "GDPR — breach notification"
         period = "72 hours"
-        article = (
-            "GDPR Art 33 "
-            "(notify supervisory authority within 72 hours where feasible)"
-        )
+        article = "GDPR Art 33 (notify supervisory authority within 72 hours where feasible)"
         years = None
     elif any(term in query for term in ("defamation", "libel", "slander")):
         category = "Defamation"
         period = "1 year"
         article = (
-            "Statute of Limitations 1957 as amended by Defamation Act 2009 "
-            "(extendable to 2 years)"
+            "Statute of Limitations 1957 as amended by Defamation Act 2009 (extendable to 2 years)"
         )
         years = 1
     elif "personal injury" in query or "accident" in query:
         category = "Personal injury"
         period = "2 years"
-        article = (
-            "Statute of Limitations (Amendment) Act 1991 s3 "
-            "(2 years from date of knowledge)"
-        )
+        article = "Statute of Limitations (Amendment) Act 1991 s3 (2 years from date of knowledge)"
         years = 2
     elif any(term in query for term in ("land", "immovable", "possession")):
         category = "Recovery of land"
@@ -120,10 +114,7 @@ def handle(payload: str) -> dict:
         period = "6 years"
         article = "Statute of Limitations 1957 s 11"
         years = 6
-    elif any(
-        term in query
-        for term in ("tort", "negligence", "nuisance", "trespass", "damage")
-    ):
+    elif any(term in query for term in ("tort", "negligence", "nuisance", "trespass", "damage")):
         category = "Tort"
         period = "6 years"
         article = "Statute of Limitations 1957 s 11"

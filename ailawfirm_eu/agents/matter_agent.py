@@ -33,10 +33,10 @@ def handle(payload: str) -> dict:
     matters = _read_store()
 
     if query.startswith("add matter "):
-        name = text[len("add matter "):].strip()
+        name = text[len("add matter ") :].strip()
         action = "added"
     elif query.startswith("new matter "):
-        name = text[len("new matter "):].strip()
+        name = text[len("new matter ") :].strip()
         action = "added"
     else:
         name = ""
@@ -67,7 +67,7 @@ def handle(payload: str) -> dict:
     requested = None
     for prefix in ("status of ", "about ", "matter "):
         if query.startswith(prefix):
-            requested = text[len(prefix):].strip()
+            requested = text[len(prefix) :].strip()
             break
 
     if requested is not None:

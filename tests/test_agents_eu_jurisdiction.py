@@ -36,7 +36,9 @@ class TestDraftingEU:
         assert "dpia" in b or "impact assessment" in b
 
     def test_breach_notification_recognised(self):
-        r = drafting_agent.handle("draft a personal data breach notification to the supervisory authority")
+        r = drafting_agent.handle(
+            "draft a personal data breach notification to the supervisory authority"
+        )
         assert "breach" in r.get("doc_type", "").lower()
 
     def test_irish_pleading_recognised(self):
@@ -52,5 +54,10 @@ class TestDraftingEU:
         assert "draft-with-docx" in _flat(drafting_agent.handle("draft a DPIA")).lower()
 
     def test_no_foreign_residue(self):
-        for q in ["draft a DSAR", "draft a writ petition", "draft an SLP", "draft a complaint under FRCP"]:
+        for q in [
+            "draft a DSAR",
+            "draft a writ petition",
+            "draft an SLP",
+            "draft a complaint under FRCP",
+        ]:
             assert not FOREIGN_RESIDUE.search(_flat(drafting_agent.handle(q))), q

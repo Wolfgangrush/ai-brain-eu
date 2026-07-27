@@ -48,7 +48,9 @@ class TestDeadlineEU:
         assert "12 year" in b
 
     def test_gdpr_dsar_one_month(self):
-        b = _flat(deadline_agent.handle("deadline to respond to a data subject access request DSAR")).lower()
+        b = _flat(
+            deadline_agent.handle("deadline to respond to a data subject access request DSAR")
+        ).lower()
         assert "1 month" in b or "one month" in b
 
     def test_gdpr_breach_72_hours(self):
