@@ -36,7 +36,7 @@ If you cite an EU authority (Case C-311/18 (Schrems II) ECLI:EU:C:2020:559, or a
 
 ```
 ~/Desktop/<FIRM_NAME>/
-  └── <matter-folder>/                  e.g., munjewar-vs-mukhi-s138/
+  └── <matter-folder>/                  e.g., acme-gmbh-gdpr-complaint/
       ├── matter.md                     The matter index — parties, court, case no, dates
       ├── docs/                         Source documents (PDFs, scans, originals)
       ├── drafts/                       Every draft, .md + .docx paired
