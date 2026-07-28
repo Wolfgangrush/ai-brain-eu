@@ -57,8 +57,8 @@ Inside the matter's drafts directory:
 
 ```
 ~/Desktop/<firm-name>/<matter-folder>/drafts/
-  ├── 2026-05-24-complaint-s138.md
-  └── 2026-05-24-complaint-s138.docx        ← ALWAYS paired
+  ├── 2026-05-24-gdpr-art77-complaint.md
+  └── 2026-05-24-gdpr-art77-complaint.docx        ← ALWAYS paired
 ```
 
 If the matter folder doesn't have a `drafts/` subdir, create it.
