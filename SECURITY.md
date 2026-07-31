@@ -4,7 +4,7 @@
 
 If you discover a security vulnerability in AI Brain — EU, please report it via:
 
-1. **GitHub Security Advisories** (preferred): https://github.com/Wolfgangrush/ai-law-firm-eu/security/advisories/new
+1. **GitHub Security Advisories** (preferred): https://github.com/Wolfgangrush/ai-brain-eu/security/advisories/new
 2. **Private email**: advrushikeshravindramahajan@gmail.com
 
 Please do NOT post vulnerabilities to public GitHub Issues.

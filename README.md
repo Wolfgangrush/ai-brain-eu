@@ -119,7 +119,7 @@ The Big Four professional services firms have AI procurement teams. Solo lawyers
 ### Step 2 — Install Python (one-time) + the tool
 
 ```bash
-pip install git+https://github.com/Wolfgangrush/ai-law-firm-eu.git
+pip install git+https://github.com/Wolfgangrush/ai-brain-eu.git
 ```
 
 ### Step 3 — Connect an AI brain (ONE COMMAND)
@@ -278,7 +278,7 @@ When a new version of AI Brain — EU is published, you pull it in with **one co
 ailawfirm-eu update
 ```
 
-Under the hood this runs `pip install --upgrade git+https://github.com/Wolfgangrush/ai-law-firm-eu.git`. After it finishes, restart any open `ailawfirm-eu` session so the new skills + prompts load.
+Under the hood this runs `pip install --upgrade git+https://github.com/Wolfgangrush/ai-brain-eu.git`. After it finishes, restart any open `ailawfirm-eu` session so the new skills + prompts load.
 
 ### Path 2 — Inside Claude Code
 
@@ -403,7 +403,7 @@ Ships AS-IS without warranty. See [LICENSE](LICENSE).
 
 ## 📞 Support
 
-- **Issues / bugs:** https://github.com/Wolfgangrush/ai-law-firm-eu/issues
+- **Issues / bugs:** https://github.com/Wolfgangrush/ai-brain-eu/issues
 - **Translation help:** [TRANSLATION_HELP_WANTED.md](TRANSLATION_HELP_WANTED.md) (12 EU languages welcomed)
 - **Member-State-specific feature?** Open an issue with `[ms-DE]` / `[ms-FR]` / etc. label
 - **CJEU / cross-border feature?** Open an issue with `[cross-border]` label

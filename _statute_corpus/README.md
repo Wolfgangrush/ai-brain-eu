@@ -70,7 +70,7 @@ Every section carries a `**STATUS:** VERIFIED | PARTIAL | NOT VERIFIED` marker. 
 
 ## License
 
-MIT — matches the parent repository ([ai-law-firm-eu](https://github.com/Wolfgangrush/ai-law-firm-eu)).
+MIT — matches the parent repository ([ai-law-firm-eu](https://github.com/Wolfgangrush/ai-brain-eu)).
 
 ---
 

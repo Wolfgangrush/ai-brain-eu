@@ -10,7 +10,7 @@ AI Brain EU é um **assistente de gestão de escritório de advocacia** para adv
 
 ```bash
 cd ~/Desktop
-git clone https://github.com/Wolfgangrush/ai-law-firm-eu.git
+git clone https://github.com/Wolfgangrush/ai-brain-eu.git
 cd ai-law-firm-eu
 pip install -e .
 ```
